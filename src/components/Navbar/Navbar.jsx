@@ -44,7 +44,7 @@ function Navbar({
             <button className="dropbtn">Gestión Profesores</button>
             <div className="dropdown-content">
               <button onClick={() => setCurrentView("profesores-add")}>
-                Agregar Profesor
+                Agregar Profesores
               </button>
 
               {currentUser.userType === "profesor_admin" && (
