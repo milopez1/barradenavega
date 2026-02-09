@@ -283,7 +283,7 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
           </div>
 
           {/* Documentos - CENTRADO ABAJO */}
-          {(selectedProf.hojaDeVidaFile || selectedProf.hojaDeVida) && (
+          {(selectedProf.hojaDeVidaFile || selectedProf.hojaDeVida || selectedProf.hojaDeVidaLink) && (
             <div className="profile-content-centered">
               <div className="info-section">
                 <h4>Documentos</h4>
@@ -291,11 +291,15 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
                   <a href={URL.createObjectURL(selectedProf.hojaDeVidaFile)} download={`${selectedProf.nombreCompleto || selectedProf.nombre}_CV.${selectedProf.hojaDeVidaFile.name.split('.').pop()}`}>
                     <button className="download-cv">Descargar CV</button>
                   </a>
-                ) : (
+                ) : selectedProf.hojaDeVida ? (
                   <a href={selectedProf.hojaDeVida} target="_blank" rel="noopener noreferrer">
                     <button className="download-cv">Ver CV</button>
                   </a>
-                )}
+                ) : selectedProf.hojaDeVidaLink ? (
+                  <a href={selectedProf.hojaDeVidaLink} target="_blank" rel="noopener noreferrer">
+                    <button className="download-cv">Ver CV</button>
+                  </a>
+                ) : null}
               </div>
             </div>
           )}
