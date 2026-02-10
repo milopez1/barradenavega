@@ -44,7 +44,7 @@ function Navbar({ query, setQuery, setCurrentView, toggleDarkMode, isDark, curre
         <div className="search-box"> {/* Contenedor de la caja de búsqueda */}
           <input
             type="text"
-            placeholder="Busquda de profes por apellido" // Placeholder descriptivo
+            placeholder="Busqueda por apellido" // Placeholder descriptivo
             value={localQuery} // Valor controlado localmente para debounce
             onChange={(e) => setLocalQuery(e.target.value)} // Actualiza estado local
             onKeyDown={(e) => { if (e.key === 'Enter') setCurrentView('profesores-list'); }}
@@ -57,15 +57,11 @@ function Navbar({ query, setQuery, setCurrentView, toggleDarkMode, isDark, curre
         <button onClick={toggleDarkMode} className="theme-toggle"> {/* Botón para alternar modo oscuro */}
           {isDark ? '☀️' : '🌙'} {/* Icono de sol o luna según el modo */}
         </button>
-        {currentUser ? (
+        {currentUser && (
           <div className="user-info">
             <span className="user-name">Hola, {currentUser.name}</span>
             <button className="logout-button" onClick={handleLogout}>Logout</button>
           </div>
-        ) : (
-          <button className="login-button" onClick={() => setCurrentView('login')}> {/* Botón para ir al login */}
-            Login
-          </button>
         )}
       </div>
     </nav>
