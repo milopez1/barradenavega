@@ -399,6 +399,98 @@
   }
 }
 
+/* ============================================
+   TOGGLE DE MODO DE DATOS (Local/Database)
+   ============================================ */
+
+.data-source-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px !important;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.navbar.dark .toggle-container {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.toggle-label.active {
+  opacity: 1;
+  font-weight: 600;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  border: none;
+  border-radius: 13px;
+  background: #ccc;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+.navbar.light .toggle-switch {
+  background: #ddd;
+}
+
+.navbar.dark .toggle-switch {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.toggle-switch.database {
+  background: #4CAF50;
+}
+
+.navbar.dark .toggle-switch.database {
+  background: #45a049;
+}
+
+.toggle-switch.local {
+  background: #2196F3;
+}
+
+.navbar.dark .toggle-switch.local {
+  background: #0b7dda;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: left 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.database .toggle-slider {
+  left: 24px;
+}
+
 @media (max-width: 768px) {
   .navbar {
     flex-wrap: wrap;
@@ -420,11 +512,40 @@
     width: 100%;
     justify-content: center;
     gap: 6px;
+    flex-wrap: wrap;
   }
 
   .nav-menu li button {
     padding: 6px 12px;
     font-size: 0.85rem;
+  }
+
+  .data-source-toggle {
+    width: 100% !important;
+    order: 4;
+    justify-content: center;
+  }
+
+  .toggle-container {
+    padding: 8px 12px;
+  }
+
+  .toggle-label {
+    font-size: 0.75rem;
+  }
+
+  .toggle-switch {
+    width: 42px;
+    height: 24px;
+  }
+
+  .toggle-slider {
+    width: 20px;
+    height: 20px;
+  }
+
+  .toggle-switch.database .toggle-slider {
+    left: 20px;
   }
 
   .navbar-right {
@@ -469,5 +590,28 @@
 
   .user-name {
     display: none; /* Ocultar nombre en móvil */
+  }
+
+  .data-source-toggle {
+    order: 5;
+    width: 100% !important;
+  }
+
+  .toggle-label {
+    font-size: 0.7rem;
+  }
+
+  .toggle-switch {
+    width: 38px;
+    height: 22px;
+  }
+
+  .toggle-slider {
+    width: 18px;
+    height: 18px;
+  }
+
+  .toggle-switch.database .toggle-slider {
+    left: 18px;
   }
 }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'; // Importamos React y hooks para manejar estado y efectos
-import logo from './logo.svg'; // Logo de React
 import './App.css'; // Estilos principales de la aplicación
 import Navbar from './components/Navbar/Navbar.jsx'; // Componente de la barra de navegación
 import Documents from './components/Documents/Documents.jsx'; // Componente para gestionar documentos (CRUD)
@@ -55,6 +54,8 @@ function App() {
   const [query, setQuery] = useState('');
   // Estado para el usuario actualmente logueado
   const [currentUser, setCurrentUser] = useState(null);
+  // Estado para el modo de datos: 'local' o 'database'
+  const [dataSourceMode, setDataSourceMode] = useState('local');
 
   // Efecto para aplicar el modo oscuro al body
   useEffect(() => {
@@ -150,6 +151,8 @@ function App() {
         isDark={isDark}
         currentUser={currentUser}
         handleLogout={handleLogout}
+        dataSourceMode={dataSourceMode}
+        setDataSourceMode={setDataSourceMode}
       />
       {/* Vista de inicio con logo y contador */}
      {currentView === 'home' && (
@@ -215,6 +218,7 @@ function App() {
           setCurrentView={setCurrentView} 
           query={query}
           setQuery={setQuery}
+          dataSourceMode={dataSourceMode}
         />
       )}
     </div>

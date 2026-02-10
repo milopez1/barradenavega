@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'; // Importamos React y hooks 
 
 import './Navbar.css'; // Estilos específicos de la barra de navegación
 
-function Navbar({ query, setQuery, setCurrentView, toggleDarkMode, isDark, currentUser, handleLogout }) {
-  // Función Navbar que recibe props para búsqueda, navegación, modo oscuro, usuario actual y logout
+function Navbar({ query, setQuery, setCurrentView, toggleDarkMode, isDark, currentUser, handleLogout, dataSourceMode, setDataSourceMode }) {
+  // Función Navbar que recibe props para búsqueda, navegación, modo oscuro, usuario actual, logout y modo de datos
   const [localQuery, setLocalQuery] = useState(query || '');
 
   useEffect(() => {
@@ -36,6 +36,21 @@ function Navbar({ query, setQuery, setCurrentView, toggleDarkMode, isDark, curre
               {(currentUser.userType === 'profesor_admin') && (
                 <button onClick={() => setCurrentView('profesores-assign-courses')}>Asignar Cursos</button>
               )}
+            </div>
+          </li>
+        )}
+        {currentUser && currentUser.userType.includes('profesor') && (
+          <li className="data-source-toggle">
+            <div className="toggle-container">
+              <span className={`toggle-label ${dataSourceMode === 'local' ? 'active' : ''}`}>Local</span>
+              <button 
+                className={`toggle-switch ${dataSourceMode}`}
+                onClick={() => setDataSourceMode(dataSourceMode === 'local' ? 'database' : 'local')}
+                title="Cambiar entre datos locales y base de datos"
+              >
+                <span className="toggle-slider"></span>
+              </button>
+              <span className={`toggle-label ${dataSourceMode === 'database' ? 'active' : ''}`}>Base de Datos</span>
             </div>
           </li>
         )}

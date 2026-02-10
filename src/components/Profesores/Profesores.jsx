@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Profesores.css';
 
-function Profesores({ currentView, currentUser, profesores, cursos, onCreateProfesor, onUpdateProfesor, onDeactivateProfesor, onAssignCursos, setCurrentView, query }) {
+function Profesores({ currentView, currentUser, profesores, cursos, onCreateProfesor, onUpdateProfesor, onDeactivateProfesor, onAssignCursos, setCurrentView, query, dataSourceMode, setDataSourceMode }) {
   const [selectedProf, setSelectedProf] = useState(null);
   const [editing, setEditing] = useState(null);
   
@@ -16,10 +16,10 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
     anosExperiencia: '',
     tipoContrato: '',
     perfilProfesional: '', // Descripción del profesor
-    foto: '', // URL
-    hojaDeVida: '', // URL
-    fotoFile: null, // Archivo de foto
-    hojaDeVidaFile: null // Archivo de hoja de vida
+    foto: '', // URL - Solo captura en modo Local
+    hojaDeVida: '', // URL - Solo captura en modo Local
+    fotoFile: null, // Archivo de foto - Solo captura en modo Local
+    hojaDeVidaFile: null // Archivo de hoja de vida - Solo captura en modo Local
   });
 
   // Avatar por defecto
@@ -161,7 +161,20 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
     const listToShow = isAdmin ? profesores : activeProfesores;
     return (
       <div className="profesores-container">
-        <h2>Lista de Profesores</h2>
+        <div className="list-header">
+          <h2>Lista de Profesores</h2>
+          <div className="toggle-container-list">
+            <span className={`toggle-label ${dataSourceMode === 'local' ? 'active' : ''}`}>Local</span>
+            <button 
+              className={`toggle-switch ${dataSourceMode}`}
+              onClick={() => setDataSourceMode(dataSourceMode === 'local' ? 'database' : 'local')}
+              title="Cambiar entre datos locales y base de datos"
+            >
+              <span className="toggle-slider"></span>
+            </button>
+            <span className={`toggle-label ${dataSourceMode === 'database' ? 'active' : ''}`}>Base de Datos</span>
+          </div>
+        </div>
         {isAdmin && (
           <button className="add-profesor-btn" onClick={() => setCurrentView('profesores-add')}>
             + Agregar Profesor
@@ -464,64 +477,71 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
           </fieldset>
 
           {/* Sección: Documentos y Foto */}
-          <fieldset>
-            <legend>Documentos y Foto</legend>
-            
-            <div className="form-group">
-              <label htmlFor="foto">URL de Foto</label>
-              <input 
-                id="foto"
-                name="foto" 
-                value={formData.foto} 
-                onChange={handleInputChange} 
-                placeholder="https://ejemplo.com/foto.jpg" 
-              />
-              <small className="help-text">O sube una foto desde tu computadora:</small>
-              <input 
-                type="file" 
-                name="fotoFile" 
-                accept="image/*" 
-                onChange={handleFileChange}
-                className="file-input"
-              />
-              {formData.foto && (
-                <div className="foto-preview">
-                  <p>Vista previa:</p>
-                  <img 
-                    src={formData.foto} 
-                    alt="Vista previa" 
-                    className="preview-image"
-                    onError={(e) => { e.target.src = defaultAvatar; }}
-                  />
-                </div>
-              )}
-            </div>
+          {dataSourceMode === 'local' && (
+            <fieldset>
+              <legend>Documentos y Foto</legend>
+              
+              <div className="form-group">
+                <label htmlFor="foto">URL de Foto</label>
+                <input 
+                  id="foto"
+                  name="foto" 
+                  value={formData.foto} 
+                  onChange={handleInputChange} 
+                  placeholder="https://ejemplo.com/foto.jpg" 
+                />
+                <small className="help-text">O sube una foto desde tu computadora:</small>
+                <input 
+                  type="file" 
+                  name="fotoFile" 
+                  accept="image/*" 
+                  onChange={handleFileChange}
+                  className="file-input"
+                />
+                {formData.foto && (
+                  <div className="foto-preview">
+                    <p>Vista previa:</p>
+                    <img 
+                      src={formData.foto} 
+                      alt="Vista previa" 
+                      className="preview-image"
+                      onError={(e) => { e.target.src = defaultAvatar; }}
+                    />
+                  </div>
+                )}
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="hojaDeVida">URL de Hoja de Vida (CV)</label>
-              <input 
-                id="hojaDeVida"
-                name="hojaDeVida" 
-                value={formData.hojaDeVida} 
-                onChange={handleInputChange} 
-                placeholder="https://ejemplo.com/cv.pdf" 
-              />
-              <small className="help-text">O sube tu hoja de vida desde tu computadora:</small>
-              <input 
-                type="file" 
-                name="hojaDeVidaFile" 
-                accept=".pdf,.doc,.docx" 
-                onChange={handleFileChange}
-                className="file-input"
-              />
-              {formData.hojaDeVida && (
-                <p className="url-preview">✓ URL ingresada: <a href={formData.hojaDeVida} target="_blank" rel="noopener noreferrer">Ver documento</a></p>
-              )}
-              {formData.hojaDeVidaFile && (
-                <p className="file-preview">✓ Archivo seleccionado: {formData.hojaDeVidaFile.name}</p>
-              )}
+              <div className="form-group">
+                <label htmlFor="hojaDeVida">URL de Hoja de Vida (CV)</label>
+                <input 
+                  id="hojaDeVida"
+                  name="hojaDeVida" 
+                  value={formData.hojaDeVida} 
+                  onChange={handleInputChange} 
+                  placeholder="https://ejemplo.com/cv.pdf" 
+                />
+                <small className="help-text">O sube tu hoja de vida desde tu computadora:</small>
+                <input 
+                  type="file" 
+                  name="hojaDeVidaFile" 
+                  accept=".pdf,.doc,.docx" 
+                  onChange={handleFileChange}
+                  className="file-input"
+                />
+                {formData.hojaDeVida && (
+                  <p className="url-preview">✓ URL ingresada: <a href={formData.hojaDeVida} target="_blank" rel="noopener noreferrer">Ver documento</a></p>
+                )}
+                {formData.hojaDeVidaFile && (
+                  <p className="file-preview">✓ Archivo seleccionado: {formData.hojaDeVidaFile.name}</p>
+                )}
+              </div>
+            </fieldset>
+          )}
+          {dataSourceMode === 'database' && (
+            <div className="data-source-info">
+              <p>ℹ️ <strong>Modo Base de Datos:</strong> Los campos de foto y hoja de vida se gestionan desde la base de datos central.</p>
             </div>
-          </fieldset>
+          )}
 
           <div className="form-actions">
             <button type="submit" className="btn-submit">Agregar Profesor</button>
@@ -674,64 +694,71 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
             </fieldset>
 
             {/* Sección: Documentos y Foto */}
-            <fieldset>
-              <legend>Documentos y Foto</legend>
-              
-              <div className="form-group">
-                <label htmlFor="foto">URL de Foto</label>
-                <input 
-                  id="foto"
-                  name="foto" 
-                  value={formData.foto} 
-                  onChange={handleInputChange} 
-                  placeholder="https://ejemplo.com/foto.jpg" 
-                />
-                <small className="help-text">O sube una foto desde tu computadora:</small>
-                <input 
-                  type="file" 
-                  name="fotoFile" 
-                  accept="image/*" 
-                  onChange={handleFileChange}
-                  className="file-input"
-                />
-                {formData.foto && (
-                  <div className="foto-preview">
-                    <p>Vista previa:</p>
-                    <img 
-                      src={formData.foto} 
-                      alt="Vista previa" 
-                      className="preview-image"
-                      onError={(e) => { e.target.src = defaultAvatar; }}
-                    />
-                  </div>
-                )}
-              </div>
+            {dataSourceMode === 'local' && (
+              <fieldset>
+                <legend>Documentos y Foto</legend>
+                
+                <div className="form-group">
+                  <label htmlFor="foto">URL de Foto</label>
+                  <input 
+                    id="foto"
+                    name="foto" 
+                    value={formData.foto} 
+                    onChange={handleInputChange} 
+                    placeholder="https://ejemplo.com/foto.jpg" 
+                  />
+                  <small className="help-text">O sube una foto desde tu computadora:</small>
+                  <input 
+                    type="file" 
+                    name="fotoFile" 
+                    accept="image/*" 
+                    onChange={handleFileChange}
+                    className="file-input"
+                  />
+                  {formData.foto && (
+                    <div className="foto-preview">
+                      <p>Vista previa:</p>
+                      <img 
+                        src={formData.foto} 
+                        alt="Vista previa" 
+                        className="preview-image"
+                        onError={(e) => { e.target.src = defaultAvatar; }}
+                      />
+                    </div>
+                  )}
+                </div>
 
-              <div className="form-group">
-                <label htmlFor="hojaDeVida">URL de Hoja de Vida (CV)</label>
-                <input 
-                  id="hojaDeVida"
-                  name="hojaDeVida" 
-                  value={formData.hojaDeVida} 
-                  onChange={handleInputChange} 
-                  placeholder="https://ejemplo.com/cv.pdf" 
-                />
-                <small className="help-text">O sube tu hoja de vida desde tu computadora:</small>
-                <input 
-                  type="file" 
-                  name="hojaDeVidaFile" 
-                  accept=".pdf,.doc,.docx" 
-                  onChange={handleFileChange}
-                  className="file-input"
-                />
-                {formData.hojaDeVida && (
-                  <p className="url-preview">✓ URL ingresada: <a href={formData.hojaDeVida} target="_blank" rel="noopener noreferrer">Ver documento</a></p>
-                )}
-                {formData.hojaDeVidaFile && (
-                  <p className="file-preview">✓ Archivo seleccionado: {formData.hojaDeVidaFile.name}</p>
-                )}
+                <div className="form-group">
+                  <label htmlFor="hojaDeVida">URL de Hoja de Vida (CV)</label>
+                  <input 
+                    id="hojaDeVida"
+                    name="hojaDeVida" 
+                    value={formData.hojaDeVida} 
+                    onChange={handleInputChange} 
+                    placeholder="https://ejemplo.com/cv.pdf" 
+                  />
+                  <small className="help-text">O sube tu hoja de vida desde tu computadora:</small>
+                  <input 
+                    type="file" 
+                    name="hojaDeVidaFile" 
+                    accept=".pdf,.doc,.docx" 
+                    onChange={handleFileChange}
+                    className="file-input"
+                  />
+                  {formData.hojaDeVida && (
+                    <p className="url-preview">✓ URL ingresada: <a href={formData.hojaDeVida} target="_blank" rel="noopener noreferrer">Ver documento</a></p>
+                  )}
+                  {formData.hojaDeVidaFile && (
+                    <p className="file-preview">✓ Archivo seleccionado: {formData.hojaDeVidaFile.name}</p>
+                  )}
+                </div>
+              </fieldset>
+            )}
+            {dataSourceMode === 'database' && (
+              <div className="data-source-info">
+                <p>ℹ️ <strong>Modo Base de Datos:</strong> Los campos de foto y hoja de vida se gestionan desde la base de datos central.</p>
               </div>
-            </fieldset>
+            )}
 
             <div className="form-actions">
               <button type="submit" className="btn-submit">Actualizar</button>
