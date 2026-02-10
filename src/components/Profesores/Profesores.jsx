@@ -158,6 +158,40 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
   const activeProfesores = profesores.filter(p => p.estado === 'activo' || p.vigencia === true);
 
   if (currentView === 'profesores-list') {
+    // Mostrar página "en construcción" si está en modo Base de Datos
+    if (dataSourceMode === 'database') {
+      return (
+        <div className="profesores-container">
+          <div className="list-header">
+            <h2>Lista de Profesores</h2>
+            <div className="toggle-container-list">
+              <span className={`toggle-label ${dataSourceMode === 'local' ? 'active' : ''}`}>Local</span>
+              <button 
+                className={`toggle-switch ${dataSourceMode}`}
+                onClick={() => setDataSourceMode(dataSourceMode === 'local' ? 'database' : 'local')}
+                title="Cambiar entre datos locales y base de datos"
+              >
+                <span className="toggle-slider"></span>
+              </button>
+              <span className={`toggle-label ${dataSourceMode === 'database' ? 'active' : ''}`}>Base de Datos</span>
+            </div>
+          </div>
+          <div className="construction-page">
+            <div className="construction-content">
+              <h2>🚧 En Construcción</h2>
+              <p>El módulo de Base de Datos se está desarrollando actualmente.</p>
+              <button 
+                onClick={() => setDataSourceMode('local')}
+                className="btn-back-to-local"
+              >
+                Volver a Datos Locales
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     const listToShow = isAdmin ? profesores : activeProfesores;
     return (
       <div className="profesores-container">
