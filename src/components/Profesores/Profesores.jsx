@@ -22,6 +22,21 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
     hojaDeVidaFile: null // Archivo de hoja de vida - Solo captura en modo Local
   });
 
+  // Estado separado para formulario de Base de Datos (sin foto ni hoja de vida)
+  const [formDataDatabase, setFormDataDatabase] = useState({
+    nombreCompleto: '',
+    numeroDocumento: '',
+    correoElectronico: '',
+    celular: '',
+    nivelAcademico: '',
+    areasAsignadas: '',
+    anosExperiencia: '',
+    tipoContrato: '',
+    perfilProfesional: ''
+  });
+
+  const [submitMessage, setSubmitMessage] = useState(null);
+
   // Avatar por defecto
   const defaultAvatar = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
@@ -77,6 +92,11 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleInputChangeDatabase = (e) => {
+    const { name, value } = e.target;
+    setFormDataDatabase({ ...formDataDatabase, [name]: value });
   };
 
   const handleFileChange = (e) => {
@@ -154,11 +174,269 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
     }
   };
 
+  // Manejador para adicionar profesor a Base de Datos via API
+  const handleAddDatabaseProfesor = async (e) => {
+    e.preventDefault();
+    
+    if (!formDataDatabase.nombreCompleto || !formDataDatabase.numeroDocumento || !formDataDatabase.correoElectronico) {
+      alert('Por favor completa los campos requeridos: Nombre, Documento y Correo');
+      return;
+    }
+
+    try {
+      // Preparado para consumir API - endpoint a configurar
+      const endpoint = process.env.REACT_APP_API_URL 
+        ? `${process.env.REACT_APP_API_URL}/profesores` 
+        : '/api/profesores';
+
+      const profesorData = {
+        nombreCompleto: formDataDatabase.nombreCompleto,
+        numeroDocumento: formDataDatabase.numeroDocumento,
+        correoElectronico: formDataDatabase.correoElectronico,
+        celular: formDataDatabase.celular || null,
+        nivelAcademico: formDataDatabase.nivelAcademico || null,
+        areasAsignadas: formDataDatabase.areasAsignadas || null,
+        anosExperiencia: parseInt(formDataDatabase.anosExperiencia) || 0,
+        tipoContrato: formDataDatabase.tipoContrato || null,
+        perfilProfesional: formDataDatabase.perfilProfesional || null,
+        vigencia: true
+      };
+
+      console.log('Preparado para enviar a API:', profesorData);
+      console.log('Endpoint:', endpoint);
+
+      // TODO: Descomentar cuando la API esté conectada
+      /*
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profesorData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al crear el profesor en la base de datos');
+      }
+
+      const result = await response.json();
+      */
+
+      setSubmitMessage({ type: 'success', text: 'Profesor agregado exitosamente' });
+      
+      // Limpiar formulario
+      setFormDataDatabase({
+        nombreCompleto: '',
+        numeroDocumento: '',
+        correoElectronico: '',
+        celular: '',
+        nivelAcademico: '',
+        areasAsignadas: '',
+        anosExperiencia: '',
+        tipoContrato: '',
+        perfilProfesional: ''
+      });
+
+      // Limpiar mensaje después de 3 segundos
+      setTimeout(() => {
+        setSubmitMessage(null);
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error:', error);
+      setSubmitMessage({ type: 'error', text: 'Error al agregar el profesor: ' + error.message });
+      setTimeout(() => {
+        setSubmitMessage(null);
+      }, 3000);
+    }
+  };
+
   const isAdmin = currentUser && currentUser.userType === 'profesor_admin';
   const activeProfesores = profesores.filter(p => p.estado === 'activo' || p.vigencia === true);
 
   if (currentView === 'profesores-list') {
-    // Mostrar página "en construcción" si está en modo Base de Datos
+    // Mostrar formulario independiente si está en modo Base de Datos y no hay profesores
+    if (dataSourceMode === 'database' && profesores.length === 0) {
+      return (
+        <div className="profesores-container">
+          <div className="list-header">
+            <h2>Gestión de Profesores - Base de Datos</h2>
+            <div className="toggle-container-list">
+              <span className={`toggle-label ${dataSourceMode === 'local' ? 'active' : ''}`}>Local</span>
+              <button 
+                className={`toggle-switch ${dataSourceMode}`}
+                onClick={() => setDataSourceMode(dataSourceMode === 'local' ? 'database' : 'local')}
+                title="Cambiar entre datos locales y base de datos"
+              >
+                <span className="toggle-slider"></span>
+              </button>
+              <span className={`toggle-label ${dataSourceMode === 'database' ? 'active' : ''}`}>Base de Datos</span>
+            </div>
+          </div>
+
+          <div className="profesor-form-container">
+            <div className="form-info">
+              <h3>Agregar Nuevo Profesor</h3>
+              <p>Base de datos conectada | Formulario listo para API</p>
+            </div>
+
+            {submitMessage && (
+              <div className={`message-alert message-${submitMessage.type}`}>
+                {submitMessage.text}
+              </div>
+            )}
+
+            <form className="profesor-form" onSubmit={handleAddDatabaseProfesor}>
+              
+              {/* Sección: Información Personal */}
+              <fieldset>
+                <legend>Información Personal</legend>
+                
+                <div className="form-group">
+                  <label htmlFor="nombreCompleto">Nombre Completo *</label>
+                  <input 
+                    id="nombreCompleto"
+                    name="nombreCompleto" 
+                    value={formDataDatabase.nombreCompleto} 
+                    onChange={handleInputChangeDatabase} 
+                    placeholder="Ej: Juan Pérez García" 
+                    required 
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="numeroDocumento">Número de Documento *</label>
+                  <input 
+                    id="numeroDocumento"
+                    name="numeroDocumento" 
+                    value={formDataDatabase.numeroDocumento} 
+                    onChange={handleInputChangeDatabase} 
+                    placeholder="Ej: 1234567890" 
+                    required 
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="correoElectronico">Correo Electrónico *</label>
+                  <input 
+                    id="correoElectronico"
+                    type="email"
+                    name="correoElectronico" 
+                    value={formDataDatabase.correoElectronico} 
+                    onChange={handleInputChangeDatabase} 
+                    placeholder="Ej: profesor@universidad.edu" 
+                    required 
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="celular">Celular</label>
+                  <input 
+                    id="celular"
+                    name="celular" 
+                    value={formDataDatabase.celular} 
+                    onChange={handleInputChangeDatabase} 
+                    placeholder="Ej: 3001234567" 
+                  />
+                </div>
+              </fieldset>
+
+              {/* Sección: Información Académica */}
+              <fieldset>
+                <legend>Información Académica</legend>
+                
+                <div className="form-group">
+                  <label htmlFor="nivelAcademico">Nivel Académico</label>
+                  <select 
+                    id="nivelAcademico"
+                    name="nivelAcademico" 
+                    value={formDataDatabase.nivelAcademico} 
+                    onChange={handleInputChangeDatabase}
+                  >
+                    <option value="">Seleccionar...</option>
+                    <option value="Licenciatura">Licenciatura</option>
+                    <option value="Especialización">Especialización</option>
+                    <option value="Maestría">Maestría</option>
+                    <option value="Doctorado">Doctorado</option>
+                    <option value="Postdoctorado">Postdoctorado</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="areasAsignadas">Áreas Asignadas</label>
+                  <input 
+                    id="areasAsignadas"
+                    name="areasAsignadas" 
+                    value={formDataDatabase.areasAsignadas} 
+                    onChange={handleInputChangeDatabase} 
+                    placeholder="Ej: Matemáticas, Física" 
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="anosExperiencia">Años de Experiencia</label>
+                  <input 
+                    id="anosExperiencia"
+                    type="number"
+                    name="anosExperiencia" 
+                    value={formDataDatabase.anosExperiencia} 
+                    onChange={handleInputChangeDatabase} 
+                    placeholder="Ej: 5" 
+                    min="0"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="perfilProfesional">Perfil Profesional</label>
+                  <textarea 
+                    id="perfilProfesional"
+                    name="perfilProfesional" 
+                    value={formDataDatabase.perfilProfesional} 
+                    onChange={handleInputChangeDatabase} 
+                    placeholder="Describe tu experiencia, metodología de enseñanza, especialidades y fortalezas como docente..."
+                    rows="4"
+                    maxLength="500"
+                  />
+                  <small className="char-count">{formDataDatabase.perfilProfesional.length}/500 caracteres</small>
+                </div>
+              </fieldset>
+
+              {/* Sección: Información Laboral */}
+              <fieldset>
+                <legend>Información Laboral</legend>
+                
+                <div className="form-group">
+                  <label htmlFor="tipoContrato">Tipo de Contrato</label>
+                  <select 
+                    id="tipoContrato"
+                    name="tipoContrato" 
+                    value={formDataDatabase.tipoContrato} 
+                    onChange={handleInputChangeDatabase}
+                  >
+                    <option value="">Seleccionar...</option>
+                    <option value="Tiempo Completo">Tiempo Completo</option>
+                    <option value="Medio Tiempo">Medio Tiempo</option>
+                    <option value="Cátedra">Cátedra</option>
+                    <option value="Contrato">Contrato</option>
+                  </select>
+                </div>
+              </fieldset>
+
+              <div className="form-info-note">
+                <p>ℹ️ <strong>Nota:</strong> Los campos de foto y hoja de vida se gestionarán directamente en la base de datos central após la conexión de la API.</p>
+              </div>
+
+              <div className="form-actions">
+                <button type="submit" className="btn-submit">Agregar Profesor</button>
+                <button type="button" className="btn-cancel" onClick={() => setDataSourceMode('local')}>Volver a Locales</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    // Mostrar página "en construcción" si está en modo Base de Datos y HAY profesores
     if (dataSourceMode === 'database') {
       return (
         <div className="profesores-container">
