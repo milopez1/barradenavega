@@ -219,6 +219,7 @@ function App() {
           query={query}
           setQuery={setQuery}
           dataSourceMode={dataSourceMode}
+          setDataSourceMode={setDataSourceMode}
         />
       )}
     </div>

@@ -255,12 +255,129 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
   const activeProfesores = profesores.filter(p => p.estado === 'activo' || p.vigencia === true);
 
   if (currentView === 'profesores-list') {
-    // Mostrar formulario independiente si está en modo Base de Datos y no hay profesores
+    // Mostrar solo opción de agregar profesor si está en modo Base de Datos y no hay profesores
     if (dataSourceMode === 'database' && profesores.length === 0) {
       return (
         <div className="profesores-container">
           <div className="list-header">
             <h2>Gestión de Profesores - Base de Datos</h2>
+            <div className="toggle-container-list">
+              <span className={`toggle-label ${dataSourceMode === 'local' ? 'active' : ''}`}>Local</span>
+              <button 
+                className={`toggle-switch ${dataSourceMode}`}
+                onClick={() => setDataSourceMode(dataSourceMode === 'local' ? 'database' : 'local')}
+                title="Cambiar entre datos locales y base de datos"
+              >
+                <span className="toggle-slider"></span>
+              </button>
+              <span className={`toggle-label ${dataSourceMode === 'database' ? 'active' : ''}`}>Base de Datos</span>
+            </div>
+          </div>
+
+          <div className="database-options-container">
+            <div className="options-grid single-option">
+              {/* Opción: Ingresar Primer Profesor */}
+              <div className="option-card add-option">
+                <div className="option-icon">➕</div>
+                <h3>Ingresar Primer Profesor</h3>
+                <p>Comienza agregando el primer profesor a la base de datos</p>
+                <button 
+                  className="option-button"
+                  onClick={() => {
+                    setFormDataDatabase({
+                      nombreCompleto: '',
+                      numeroDocumento: '',
+                      correoElectronico: '',
+                      celular: '',
+                      nivelAcademico: '',
+                      areasAsignadas: '',
+                      anosExperiencia: '',
+                      tipoContrato: '',
+                      perfilProfesional: ''
+                    });
+                    setCurrentView('profesores-database-add');
+                  }}
+                >
+                  Ir al Formulario
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Mostrar opciones de Base de Datos si está en modo Base de Datos y HAY profesores
+    if (dataSourceMode === 'database') {
+      return (
+        <div className="profesores-container">
+          <div className="list-header">
+            <h2>Gestión - Base de Datos</h2>
+            <div className="toggle-container-list">
+              <span className={`toggle-label ${dataSourceMode === 'local' ? 'active' : ''}`}>Local</span>
+              <button 
+                className={`toggle-switch ${dataSourceMode}`}
+                onClick={() => setDataSourceMode(dataSourceMode === 'local' ? 'database' : 'local')}
+                title="Cambiar entre datos locales y base de datos"
+              >
+                <span className="toggle-slider"></span>
+              </button>
+              <span className={`toggle-label ${dataSourceMode === 'database' ? 'active' : ''}`}>Base de Datos</span>
+            </div>
+          </div>
+
+          <div className="database-options-container">
+            <div className="options-grid">
+              {/* Opción 1: Ingresar Profesor */}
+              <div className="option-card add-option">
+                <div className="option-icon">➕</div>
+                <h3>Ingresar Profesor</h3>
+                <p>Agregar nuevo profesor a la base de datos</p>
+                <button 
+                  className="option-button"
+                  onClick={() => {
+                    setFormDataDatabase({
+                      nombreCompleto: '',
+                      numeroDocumento: '',
+                      correoElectronico: '',
+                      celular: '',
+                      nivelAcademico: '',
+                      areasAsignadas: '',
+                      anosExperiencia: '',
+                      tipoContrato: '',
+                      perfilProfesional: ''
+                    });
+                    setCurrentView('profesores-database-add');
+                  }}
+                >
+                  Ir al Formulario
+                </button>
+              </div>
+
+              {/* Opción 2: Ver Profesores */}
+              <div className="option-card view-option">
+                <div className="option-icon">👥</div>
+                <h3>Ver Profesores</h3>
+                <p>Visualizar todos los profesores registrados</p>
+                <button 
+                  className="option-button"
+                  onClick={() => setCurrentView('profesores-database-list')}
+                >
+                  Ver Lista
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Vista para agregar profesor a base de datos
+    if (currentView === 'profesores-database-add' && dataSourceMode === 'database') {
+      return (
+        <div className="profesores-container">
+          <div className="list-header">
+            <h2>Gestión - Base de Datos</h2>
             <div className="toggle-container-list">
               <span className={`toggle-label ${dataSourceMode === 'local' ? 'active' : ''}`}>Local</span>
               <button 
@@ -428,7 +545,7 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
 
               <div className="form-actions">
                 <button type="submit" className="btn-submit">Agregar Profesor</button>
-                <button type="button" className="btn-cancel" onClick={() => setDataSourceMode('local')}>Volver a Locales</button>
+                <button type="button" className="btn-cancel" onClick={() => setCurrentView('profesores-list')}>Volver</button>
               </div>
             </form>
           </div>
@@ -436,12 +553,12 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
       );
     }
 
-    // Mostrar página "en construcción" si está en modo Base de Datos y HAY profesores
-    if (dataSourceMode === 'database') {
+    // Vista para ver profesores de la base de datos
+    if (currentView === 'profesores-database-list' && dataSourceMode === 'database') {
       return (
         <div className="profesores-container">
           <div className="list-header">
-            <h2>Lista de Profesores</h2>
+            <h2>Profesores - Base de Datos</h2>
             <div className="toggle-container-list">
               <span className={`toggle-label ${dataSourceMode === 'local' ? 'active' : ''}`}>Local</span>
               <button 
@@ -454,17 +571,76 @@ function Profesores({ currentView, currentUser, profesores, cursos, onCreateProf
               <span className={`toggle-label ${dataSourceMode === 'database' ? 'active' : ''}`}>Base de Datos</span>
             </div>
           </div>
-          <div className="construction-page">
-            <div className="construction-content">
-              <h2>🚧 En Construcción</h2>
-              <p>El módulo de Base de Datos se está desarrollando actualmente.</p>
-              <button 
-                onClick={() => setDataSourceMode('local')}
-                className="btn-back-to-local"
-              >
-                Volver a Datos Locales
-              </button>
-            </div>
+          
+          <div className="database-actions">
+            <button 
+              className="add-profesor-btn"
+              onClick={() => {
+                setFormDataDatabase({
+                  nombreCompleto: '',
+                  numeroDocumento: '',
+                  correoElectronico: '',
+                  celular: '',
+                  nivelAcademico: '',
+                  areasAsignadas: '',
+                  anosExperiencia: '',
+                  tipoContrato: '',
+                  perfilProfesional: ''
+                });
+                setCurrentView('profesores-database-add');
+              }}
+            >
+              + Agregar Profesor
+            </button>
+            <button 
+              className="back-to-options-btn"
+              onClick={() => setCurrentView('profesores-list')}
+            >
+              ← Volver a Opciones
+            </button>
+          </div>
+
+          <div className="profesores-grid">
+            {profesores.length === 0 ? (
+              <div className="no-results">
+                <p>No hay profesores registrados en la base de datos.</p>
+                <button 
+                  onClick={() => {
+                    setFormDataDatabase({
+                      nombreCompleto: '',
+                      numeroDocumento: '',
+                      correoElectronico: '',
+                      celular: '',
+                      nivelAcademico: '',
+                      areasAsignadas: '',
+                      anosExperiencia: '',
+                      tipoContrato: '',
+                      perfilProfesional: ''
+                    });
+                    setCurrentView('profesores-database-add');
+                  }}
+                >
+                  Agregar el primer profesor
+                </button>
+              </div>
+            ) : (
+              profesores.map(prof => (
+                <div key={prof.id} className="profesor-card">
+                  <img 
+                    src={prof.foto || defaultAvatar} 
+                    alt={prof.nombreCompleto || prof.nombre} 
+                    className="profesor-foto" 
+                    onError={(e) => { e.target.src = defaultAvatar; }}
+                  />
+                  <h3>{highlightText(prof.nombreCompleto || prof.nombre)}</h3>
+                  <p className="profesor-area">{highlightText(prof.areasAsignadas || prof.especialidad)}</p>
+                  {(prof.anosExperiencia || prof.anosExperiencia === 0) && (
+                    <p className="profesor-experiencia">{prof.anosExperiencia} años de experiencia</p>
+                  )}
+                  <button onClick={() => { setSelectedProf(prof); setCurrentView('profesores-profile'); }}>Ver Perfil</button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       );

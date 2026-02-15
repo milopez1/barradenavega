@@ -1550,7 +1550,187 @@ textarea {
   color: #a6d6ff;
 }
 
-@media (max-width: 480px) {
+/* ESTILOS PARA OPCIONES DE BASE DE DATOS */
+.database-options-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.options-grid.single-option {
+  grid-template-columns: 1fr;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.option-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.dark .option-card {
+  background: #1a1f2e;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.option-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.dark .option-card:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.option-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #004B87 0%, #0066CC 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 16px rgba(0, 75, 135, 0.3);
+}
+
+.option-card.view-option .option-icon {
+  background: linear-gradient(135deg, #00AA55 0%, #00CC66 100%);
+  box-shadow: 0 4px 16px rgba(0, 170, 85, 0.3);
+}
+
+.option-card h3 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #004B87;
+  font-weight: 700;
+}
+
+.dark .option-card h3 {
+  color: #FFFFFF;
+}
+
+.option-card p {
+  margin: 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.dark .option-card p {
+  color: #ccc;
+}
+
+.option-button {
+  background: linear-gradient(135deg, #004B87 0%, #0066CC 100%);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+  width: 100%;
+  max-width: 200px;
+}
+
+.option-card.view-option .option-button {
+  background: linear-gradient(135deg, #00AA55 0%, #00CC66 100%);
+}
+
+.option-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+}
+
+.option-card.view-option .option-button:hover {
+  box-shadow: 0 6px 20px rgba(0, 204, 102, 0.4);
+}
+
+.database-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.back-to-options-btn {
+  background: #f0f0f0;
+  color: #333;
+  border: 2px solid #ddd;
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dark .back-to-options-btn {
+  background: #2a2f3e;
+  color: #fff;
+  border-color: #444;
+}
+
+.back-to-options-btn:hover {
+  background: #e0e0e0;
+  border-color: #999;
+  transform: translateY(-2px);
+}
+
+.dark .back-to-options-btn:hover {
+  background: #3a3f4e;
+  border-color: #666;
+}
+
+@media (max-width: 768px) {
+  .options-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .option-card {
+    padding: 30px;
+  }
+
+  .option-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 2.5rem;
+  }
+
+  .option-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .database-actions {
+    flex-direction: column;
+  }
+
+  .database-actions button {
+    width: 100%;
+  }
+}
   .profesores-container h2 {
     font-size: 1.5rem;
   }
