@@ -1731,6 +1731,8 @@ textarea {
     width: 100%;
   }
 }
+
+@media (max-width: 480px) {
   .profesores-container h2 {
     font-size: 1.5rem;
   }
